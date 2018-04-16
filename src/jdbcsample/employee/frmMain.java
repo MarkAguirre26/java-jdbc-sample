@@ -6,7 +6,6 @@
 package jdbcsample.employee;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -106,9 +105,10 @@ public class frmMain extends javax.swing.JFrame {
     private void cmdGetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdGetActionPerformed
         try {
             // TODO add your handling code here:
-            for (Employee item : EmployeeService.getEmployees()) {
+            for (Employee item : EmployeeService.getRows()) {
                 System.out.println(item.getFirstName() + " " + item.getLastName());
-            }
+            }            
+            
         } catch (SQLException ex) {
             Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -117,10 +117,10 @@ public class frmMain extends javax.swing.JFrame {
 
     private void cmdSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSaveActionPerformed
 
-        Employee e = new Employee();       
+        Employee e = new Employee();
         e.setFirstName("Mark Somerson");
         e.setLastName("Aguirre");
-        
+
         try {
             if (EmployeeService.Save(e) > 0) {
                 JOptionPane.showMessageDialog(null, "Record saved successfully!", "Message", JOptionPane.INFORMATION_MESSAGE);
@@ -133,12 +133,12 @@ public class frmMain extends javax.swing.JFrame {
     }//GEN-LAST:event_cmdSaveActionPerformed
 
     private void cmdUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdUpdateActionPerformed
-       
-        Employee e = new Employee();  
+
+        Employee e = new Employee();
         e.setId(123);
         e.setFirstName("Mark Somerson");
         e.setLastName("Aguirre");
-        
+
         try {
             if (EmployeeService.Update(e) > 0) {
                 JOptionPane.showMessageDialog(null, "Record Update successfully!", "Message", JOptionPane.INFORMATION_MESSAGE);
@@ -148,16 +148,15 @@ public class frmMain extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
+
+
     }//GEN-LAST:event_cmdUpdateActionPerformed
 
     private void cmdDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDeleteActionPerformed
         // TODO add your handling code here:
-         Employee e = new Employee();  
-         e.setId(123);        
-        
+        Employee e = new Employee();
+        e.setId(123);
+
         try {
             if (EmployeeService.Delete(e) > 0) {
                 JOptionPane.showMessageDialog(null, "Record Deleted successfully!", "Message", JOptionPane.INFORMATION_MESSAGE);
@@ -167,8 +166,8 @@ public class frmMain extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
+
+
     }//GEN-LAST:event_cmdDeleteActionPerformed
 
     /**

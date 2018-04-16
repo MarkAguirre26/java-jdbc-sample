@@ -9,7 +9,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import static javafx.scene.input.KeyCode.T;
+import sun.security.rsa.RSACore;
 
 /**
  *
@@ -18,61 +25,73 @@ import java.sql.SQLException;
 public class MySqlClass {
 
     private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
-    public static String HOST = "";
-    public static String DATABASE = "";
-    private static final String DB_CONNECTION = "jdbc:mysql://" + HOST + ":3306/" + DATABASE;
+    public static String HOST = "localhost";
+    public static String DATABASE = "dev-todo";
+    private static final String DB_CONNECTION = "jdbc:mysql://" + HOST + ":3306/" + DATABASE + "?AutoReconnecttrue&useSSL=false";
     public static String DB_USER = "root";
     public static String DB_PASSWORD = "";
 
-    private static java.sql.Connection getDBConnection() {
-
-        java.sql.Connection dbConnection = null;
-
-        try {
-            Class.forName(DB_DRIVER);
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
-
-        try {
-            dbConnection = DriverManager.getConnection(DB_CONNECTION, DB_USER, DB_PASSWORD);
-            return dbConnection;
-
-        } catch (SQLException e) {
-
-            System.out.println(e.getMessage());
-
-        }
-
-        return dbConnection;
+    public static Connection getConnection() throws SQLException {
+        String USERNAME = "root";
+        String PASSWORD = "";
+        String CONN = "jdbc:mysql://localhost:3306/dev-todo?AutoReconnecttrue&useSSL=false";
+        return DriverManager.getConnection(CONN, USERNAME, PASSWORD);
 
     }
 
-    public static ResultSet Table(String selectSQL, String[] placeHolderValue) throws SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+    public static <T> List<T> Table(String selectSQL, String[] value) throws SQLException {
+
         ResultSet rs = null;
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(selectSQL);) {
+            rs = stmt.executeQuery(); // execute  SQL stetement
+            while (rs.next()) {
+                System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3));
 
-        try {
-            conn = getDBConnection();
-            stmt = conn.prepareStatement(selectSQL);
-            stmt.setString(1,placeHolderValue[0].toString()); //set the placeholder value         
-            rs = stmt.executeQuery();  // execute  SQL stetement
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return (List<T>) rs;
+    }
 
+    public static List<Map<String, Object>> TableRows(String selectSQL, String[] value) throws SQLException {
+
+        ResultSet rs = null;
+        List<Map<String, Object>> resultList = null;
+        try (
+                Connection conn = getConnection();
+                PreparedStatement stmt = conn.prepareStatement(selectSQL);) {
+            if(value != null){
+                for(int i = 0;i < value.length; i++){
+                    stmt.setString((i+1), value[i]);
+                }
+            }
+            rs = stmt.executeQuery(); // execute  SQL stetement
+
+            resultList = new ArrayList<Map<String, Object>>();
+            Map<String, Object> row = null;
+
+            ResultSetMetaData metaData = rs.getMetaData();
+            Integer columnCount = metaData.getColumnCount();
+
+            while (rs.next()) {
+                row = new HashMap<String, Object>();
+                for (int i = 1; i <= columnCount; i++) {
+                    row.put(metaData.getColumnName(i), rs.getObject(i));
+                }
+                resultList.add(row);
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
             if (rs != null) {
                 rs.close();
             }
         }
-        return rs;
+
+        return resultList;
     }
 
     public static int ExecuteQuery(String qry, String[] value) throws SQLException {
@@ -80,9 +99,13 @@ public class MySqlClass {
         PreparedStatement stmt = null;
         int status = 0;
         try {
-            conn = getDBConnection();
+            conn = getConnection();
             stmt = conn.prepareStatement(qry);
-            stmt.setInt(1, 1001); //set the placeholder value         
+            if (value != null) {
+                for (int i = 0; i < value.length; i++) {
+                    stmt.setString((i + 1), String.valueOf(value[i]));
+                }
+            }
             status = stmt.executeUpdate();  // execute  SQL stetement
 
         } catch (SQLException e) {

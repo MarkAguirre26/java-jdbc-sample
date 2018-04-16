@@ -5,10 +5,6 @@
  */
 package jdbcsample.employee;
 
-import java.util.ArrayList;
-import java.util.List;
-import jdbcsample.config.AppAction;
-
 /**
  *
  * @author AGUIRREMR

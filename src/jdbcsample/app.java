@@ -5,35 +5,38 @@
  */
 package jdbcsample;
 
+import com.mysql.jdbc.PreparedStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import jdbcsample.config.MySqlClass;
+import jdbcsample.employee.Employee;
 
 /**
  *
  * @author AGUIRREMR
  */
-
-import  jdbcsample.employee.frmMain;
+import jdbcsample.employee.frmMain;
 
 public class app {
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
        
-        
-        
-        
- /* Create and display the form */
+
+        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new frmMain().setVisible(true);
             }
         });
-
     }
 
 }
