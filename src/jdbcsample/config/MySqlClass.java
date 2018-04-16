@@ -39,22 +39,6 @@ public class MySqlClass {
 
     }
 
-    public static <T> List<T> Table(String selectSQL, String[] value) throws SQLException {
-
-        ResultSet rs = null;
-        try (
-                Connection conn = getConnection();
-                PreparedStatement stmt = conn.prepareStatement(selectSQL);) {
-            rs = stmt.executeQuery(); // execute  SQL stetement
-            while (rs.next()) {
-                System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getString(3));
-
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return (List<T>) rs;
-    }
 
     public static List<Map<String, Object>> TableRows(String selectSQL, String[] value) throws SQLException {
 
